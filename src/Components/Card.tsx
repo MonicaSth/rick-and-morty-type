@@ -2,15 +2,18 @@ import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { Character } from "../API/useCharacters";
+import { useThemeContext } from "../Context/Theme-context";
 
 interface CardProps {
   page: string;
   results: Character[];
 }
-const CardContainer = styled(Link)`
+const CardContainer = styled(Link)<{ themeIsLight: boolean }>`
   text-decoration: none;
   border: 1px solid #ccc;
-  background: rgb(34, 34, 34, 0.8);
+  background-color: ${(props) =>
+    props.themeIsLight ? "rgb(235, 235, 235, 0.8)" : "rgb(34, 34, 34, 0.8)"};
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
   box-shadow: 1px 4px 7px #747494;
   border-radius: 10px;
   display: flex;
@@ -18,12 +21,11 @@ const CardContainer = styled(Link)`
   flex-direction: column;
   justify-content: flex-start;
   position: relative;
-  color: white;
   min-width: 157px;
   width: 100%;
-  margin: 15px 7.5px;
   padding: 0;
   transition: transform 0.3s ease;
+
   &:hover {
     cursor: pointer;
     border-color: rgb(50, 195, 34);
@@ -33,17 +35,13 @@ const CardContainer = styled(Link)`
 `;
 
 const CardImage = styled.img`
-  // border-radius: 10px 10px 0 0;
-  // width: 100%;
   border-radius: 157px;
   margin: 5% 5%;
   width: 90%;
 `;
 
 const CardContent = styled.div`
-  padding: 5px;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding: 16px 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -78,11 +76,21 @@ const GenderBadge = styled.div<{
 `;
 
 const Card: React.FC<CardProps> = ({ page, results }) => {
+  const { themeIsLight } = useThemeContext();
+  const handleClick = () => {
+    window.scrollTo({ top: 200, behavior: "smooth" });
+  };
+
   return (
     <>
       {results ? (
         results.map((x) => (
-          <CardContainer to={`${page}${x.id}`} key={x.id}>
+          <CardContainer
+            themeIsLight={themeIsLight}
+            to={`${page}${x.id}`}
+            key={x.id}
+            onClick={handleClick}
+          >
             <CardImage src={x.image} alt="" />
             <CardContent>
               <GenderBadge gender={x.gender}>{x.gender}</GenderBadge>

@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Character } from "./useCharacters";
 
 const useCharacterDetails = (id: string) => {
-  const [results, setResults] = useState<Character | null>(null);
-  const API = `https://rickandmortyapi.com/api/character/${id}`;
+  const [fetchedCharacterDetails, setFetchedCharacterDetails] =
+    useState<Character | null>(null);
+  const detailsApiEndpoint = `https://rickandmortyapi.com/api/character/${id}`;
 
   useEffect(() => {
-    fetch(API)
+    fetch(detailsApiEndpoint)
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -15,14 +16,14 @@ const useCharacterDetails = (id: string) => {
         }
         return response.json();
       })
-      .then((data) => setResults(data))
+      .then((data) => setFetchedCharacterDetails(data))
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [API]);
+  }, [detailsApiEndpoint]);
 
   return {
-    results,
+    fetchedCharacterDetails,
   };
 };
 export default useCharacterDetails;

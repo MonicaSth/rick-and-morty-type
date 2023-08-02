@@ -7,16 +7,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   width: 100%;
-  background: url("./Images/Rick and Morty Dark.jpg") repeat;
-  background-size: cover;
-  background-position-y: top;
-  background-position-x: center;
-  background-attachment: fixed;
   scroll-behavior: smooth;
   text-align: center;
   color: white;
   display: flex;
-  justyfy-content: center;
+  justify-content: center;
   flex-direction: row;
 }
 

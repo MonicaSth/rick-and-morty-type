@@ -1,15 +1,17 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
+import { useThemeContext } from "../Context/Theme-context";
 
 interface SearchInputProps {
   reset: boolean;
   onChange: (searchText: string) => void;
 }
 
-const Input = styled.input`
+const Input = styled.input<{ themeIsLight: boolean }>`
   padding: 8px;
-  background-color: rgb(34, 34, 34, 0.8);
-  color: white;
+  background-color: ${(props) =>
+    props.themeIsLight ? "rgb(235, 235, 235, 0.8)" : "rgb(34, 34, 34, 0.8)"};
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
@@ -29,6 +31,8 @@ const Input = styled.input`
 
 const SearchInput: React.FC<SearchInputProps> = ({ onChange, reset }) => {
   const [value, setValue] = useState("");
+  const { themeIsLight } = useThemeContext();
+
   useEffect(() => {
     if (reset) {
       setValue("");
@@ -41,6 +45,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ onChange, reset }) => {
 
   return (
     <Input
+      themeIsLight={themeIsLight}
       type="text"
       value={value}
       placeholder="Search by name"

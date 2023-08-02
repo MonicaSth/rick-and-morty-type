@@ -5,32 +5,36 @@ import Card from "../Components/Card";
 import styled from "styled-components";
 import useCharacters, { Character } from "../API/useCharacters";
 import Pagination from "../Components/Pagination";
+import { useThemeContext } from "../Context/Theme-context";
 
 const CharactersContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   flex-wrap: wrap;
+  column-gap: 15px;
+  row-gap: 20px;
   margin: 2% 5%;
 `;
-const NoResult = styled.div`
+const NoResult = styled.div<{ themeIsLight: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
   width: auto;
   min-height: 200px;
-  background: rgb(34, 34, 34, 0.8);
+  background-color: ${(props) =>
+    props.themeIsLight ? "rgb(235, 235, 235, 0.8)" : "rgb(34, 34, 34, 0.8)"};
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
   box-shadow: 1px 4px 7px #747494;
   border-radius: 10px;
-  margin: 2% 10%;
+  margin: 2% 10% 10%;
 `;
 const MainHomeStyled = styled.div`
   width: 100%;
 `;
 const FiltersContainer = styled.div`
   width: auto;
-  margin: 30px;
-  margin-bottom: 90px;
+  margin: 30px 30px 90px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -39,10 +43,12 @@ const FiltersContainer = styled.div`
     flex-direction: column;
   }
 `;
-const ResetButton = styled.button`
+
+const ResetButton = styled.button<{ themeIsLight: boolean }>`
   padding: 8px;
-  background-color: rgb(34, 34, 34, 0.8);
-  color: white;
+  background-color: ${(props) =>
+    props.themeIsLight ? "rgb(72, 199, 105, 0.8)" : "rgb(34, 34, 34, 0.8)"};
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
@@ -51,7 +57,6 @@ const ResetButton = styled.button`
   margin: 10px;
   transition: transform 0.1s ease-in-out;
   &:active {
-    /* Apply the desired animation when the button is clicked */
     transform: scale(0.9);
   }
   &:focus {
@@ -63,6 +68,7 @@ const ResetButton = styled.button`
     box-shadow: 1px 4px 7px rgb(50, 195, 34);
   }
 `;
+
 const Home: React.FC = () => {
   const [filteredCharacters, setFilteredCharacters] = useState<Character[]>([]);
   const [searchText, setSearchText] = useState("");
@@ -71,15 +77,15 @@ const Home: React.FC = () => {
   const [Characters, setCharacters] = useState<Character[]>([]);
   const [lastPage, setLastPage] = useState(1);
   const [reset, setReset] = useState(false);
-
-  const { results } = useCharacters(page, searchText, selectedStatus);
+  const { fetchedCharacters } = useCharacters(page, searchText, selectedStatus);
+  const { themeIsLight } = useThemeContext();
 
   useEffect(() => {
-    if (results) {
-      setCharacters(results.results);
-      setLastPage(results.info.pages);
+    if (fetchedCharacters) {
+      setCharacters(fetchedCharacters.results);
+      setLastPage(fetchedCharacters.info.pages);
     }
-  }, [results, searchText, selectedStatus]);
+  }, [fetchedCharacters, searchText, selectedStatus]);
 
   const debounce = (callback: (...args: any[]) => void, delay: number) => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -103,7 +109,7 @@ const Home: React.FC = () => {
     setFilteredCharacters(filtered);
   }, [searchText, selectedStatus, Characters]);
 
-  if (!results) {
+  if (!fetchedCharacters) {
     return <div>Loading...</div>;
   }
 
@@ -128,15 +134,13 @@ const Home: React.FC = () => {
   };
 
   const handleNextPage = () => {
-    const numberPage = page;
-    setPage(numberPage + 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setPage(page + 1);
+    window.scrollTo({ top: 200, behavior: "smooth" });
   };
 
   const handlePreviousPage = () => {
-    const numberPage = page;
-    setPage(numberPage - 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setPage(page - 1);
+    window.scrollTo({ top: 200, behavior: "smooth" });
   };
 
   return (
@@ -144,11 +148,13 @@ const Home: React.FC = () => {
       <FiltersContainer>
         <SearchInput onChange={handleSearchChange} reset={reset} />
         <Dropdown
-          options={["Alive", "Dead", "Unknown"]}
+          options={["Alive", "Dead", "unknown"]}
           value={selectedStatus}
           onChange={handleStatusChange}
         />
-        <ResetButton onClick={handleReset}>Reset Filters</ResetButton>
+        <ResetButton themeIsLight={themeIsLight} onClick={handleReset}>
+          Reset Filters
+        </ResetButton>
       </FiltersContainer>
       {filteredCharacters.length !== 0 && (
         <>
@@ -164,7 +170,7 @@ const Home: React.FC = () => {
         </>
       )}
       {filteredCharacters.length === 0 && (
-        <NoResult>
+        <NoResult themeIsLight={themeIsLight}>
           <p>No characters with the name and status you mentioned! </p>
           <p>Please Try other options</p>
         </NoResult>

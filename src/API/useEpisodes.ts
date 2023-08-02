@@ -9,12 +9,12 @@ export interface EpisodeType {
   url: string;
   created: string;
 }
-const useCharacterDetails = (CharacterEpisodes: string[]) => {
+const useEpisodes = (CharacterEpisodes: string[]) => {
   const [episodes, setEpisodes] = useState<EpisodeType[] | null>(null);
-  const API = `https://rickandmortyapi.com/api/episode/${CharacterEpisodes}`;
+  const episodeApiEndpoint = `https://rickandmortyapi.com/api/episode/${CharacterEpisodes}`;
 
   useEffect(() => {
-    fetch(API)
+    fetch(episodeApiEndpoint)
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -29,10 +29,10 @@ const useCharacterDetails = (CharacterEpisodes: string[]) => {
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [API, CharacterEpisodes.length]);
+  }, [episodeApiEndpoint, CharacterEpisodes.length]);
 
   return {
     episodes,
   };
 };
-export default useCharacterDetails;
+export default useEpisodes;

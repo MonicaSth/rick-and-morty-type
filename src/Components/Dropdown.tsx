@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import styled from "styled-components";
+import { useThemeContext } from "../Context/Theme-context";
 
 interface DropdownProps {
   options: string[];
@@ -7,12 +8,12 @@ interface DropdownProps {
   onChange: (selectedValue: string) => void;
 }
 
-const Select = styled.select`
-  padding: 7.5px;
+const Select = styled.select<{ themeIsLight: boolean }>`
+  padding: 8px;
   border: 1px solid #ccc;
-  background-color: rgb(34, 34, 34, 0.8);
-  color: white;
-  border: 1px solid #ccc;
+  background-color: ${(props) =>
+    props.themeIsLight ? "rgb(235, 235, 235, 0.8)" : "rgb(34, 34, 34, 0.8)"};
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
   width: 150px;
   border-radius: 4px;
   font-size: 16px;
@@ -32,27 +33,24 @@ const Select = styled.select`
 
 const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange }) => {
   const [selected, setSelected] = useState(false);
+  const { themeIsLight } = useThemeContext();
 
   useEffect(() => {
     if (value === "") {
       setSelected(false);
-    }
-  }, [value]);
-  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
-    event.preventDefault();
-    const selectedValue = event.target.value;
-    if (selectedValue === "") {
-      setSelected(false);
     } else {
       setSelected(true);
     }
-    onChange(selectedValue);
+  }, [value]);
+
+  const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    onChange(event.target.value);
   };
 
   return (
-    <Select value={value} onChange={handleChange}>
-      <option value="" key="reset" hidden={!selected}>
-        {selected ? "All (reset)" : "Filter by status"}
+    <Select themeIsLight={themeIsLight} value={value} onChange={handleChange}>
+      <option value="" key="reset" selected hidden={!selected}>
+        {selected ? "All (reset filter)" : "Filter by status"}
       </option>
       {options.map((option) => (
         <option key={option} value={option}>

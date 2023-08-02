@@ -33,11 +33,13 @@ const useCharacters = (
   CharacterName: string,
   CharacterStatus: string
 ) => {
-  const [results, setResults] = useState<Result | null>(null);
-  const API = `https://rickandmortyapi.com/api/character/?page=${pageNumber}&name=${CharacterName}&status=${CharacterStatus}`;
+  const [fetchedCharacters, setFetchedCharacters] = useState<Result | null>(
+    null
+  );
+  const characterApiEndpoint = `https://rickandmortyapi.com/api/character/?page=${pageNumber}&name=${CharacterName}&status=${CharacterStatus}`;
 
   useEffect(() => {
-    fetch(API)
+    fetch(characterApiEndpoint)
       .then((response) => {
         if (!response.ok) {
           throw new Error(
@@ -46,14 +48,14 @@ const useCharacters = (
         }
         return response.json();
       })
-      .then((data) => setResults(data))
+      .then((data) => setFetchedCharacters(data))
       .catch((error) => {
         console.error("Error fetching data:", error);
       });
-  }, [API]);
+  }, [characterApiEndpoint]);
 
   return {
-    results,
+    fetchedCharacters,
   };
 };
 export default useCharacters;

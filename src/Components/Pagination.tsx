@@ -1,41 +1,58 @@
 import React from "react";
 import styled from "styled-components";
+import { useThemeContext } from "../Context/Theme-context";
 
 interface PaginationProps {
   currentPage: number;
   lastPage: number;
-
   nextPage: () => void;
   previousPage: () => void;
 }
-const PaginationDiv = styled.div`
-  margin-top: 15px;
-  margin-bottom: 50px;
+
+const PaginationDiv = styled.div<{ themeIsLight: boolean }>`
+  margin: 15px 0px 50px;
+  color: ${(props) => (props.themeIsLight ? "black" : "white")};
+  text-shadow: 2px 2px 3px
+    ${(props) => (props.themeIsLight ? "white" : "black")};
 `;
 const PageNumber = styled.span`
-  margin: 15px;
   border: 1px solid grey;
   box-shadow: 1px 4px 7px white;
+  font-weight: bold;
   border-radius: 50%;
-  color: white;
-  padding: 3px;
+  padding: 3px 9px 4px;
 `;
 
-const ButtonChangePage = styled.button`
+const ButtonChangePage = styled.button<{
+  themeIsLight: boolean;
+  disabled?: boolean;
+}>`
   background-color: transparent;
-  color: white;
-  border: 0px;
-  margin: 10px;
+  color: ${(props) =>
+    props.themeIsLight
+      ? props.disabled
+        ? "gray"
+        : "black"
+      : props.disabled
+      ? "gray"
+      : "white"};
+  text-shadow: 2px 2px 3px
+    ${(props) => (props.themeIsLight ? "white" : "black")};
+  border: 0;
+  margin: 12px;
   cursor: pointer;
   font-size: medium;
+  width: 200px;
+  text-align: center;
+  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
   &:hover {
     cursor: pointer;
-    color: rgb(50, 195, 34);
+    color: ${(props) =>
+      props.themeIsLight ? "rgb(1, 135, 36)" : "rgb(50, 195, 34)"};
     font-size: larger;
-    margin-left: 1px;
-    margin-right: 0px;
-    // margin-bottom: 40px;
+    font-weight: bold;
     margin-top: 6px;
+    margin-bottom: 11px;
   }
 `;
 
@@ -45,6 +62,8 @@ const Pagination: React.FC<PaginationProps> = ({
   nextPage,
   previousPage,
 }) => {
+  const { themeIsLight } = useThemeContext();
+
   const handleNextPage = () => {
     nextPage();
   };
@@ -55,20 +74,22 @@ const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <>
-      <PaginationDiv>
-        {currentPage !== 1 && (
-          <>
-            <ButtonChangePage onClick={handlePreviousPage}>
-              ◄ Previous page
-            </ButtonChangePage>
-          </>
-        )}
+      <PaginationDiv themeIsLight={themeIsLight}>
+        <ButtonChangePage
+          themeIsLight={themeIsLight}
+          onClick={handlePreviousPage}
+          disabled={currentPage === 1}
+        >
+          ◄ Previous page
+        </ButtonChangePage>
         <PageNumber>{currentPage}</PageNumber>
-        {currentPage !== lastPage && (
-          <ButtonChangePage onClick={handleNextPage}>
-            Next page ►{" "}
-          </ButtonChangePage>
-        )}
+        <ButtonChangePage
+          themeIsLight={themeIsLight}
+          onClick={handleNextPage}
+          disabled={currentPage === lastPage}
+        >
+          Next page ►
+        </ButtonChangePage>
       </PaginationDiv>
     </>
   );

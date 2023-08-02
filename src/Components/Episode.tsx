@@ -7,13 +7,12 @@ interface EpisodeProps {
 }
 
 const CustomList = styled.ul`
-  list-style: none; /* Remove default bullets */
-  padding-left: 0; /* Remove default left padding */
+  list-style: none;
+  padding-left: 0;
 `;
 const EpisodeStyled = styled.div`
   display: flex;
   flex-direction: column;
-  // align-items: flex-start;
   justify-content: flex-start;
 `;
 
