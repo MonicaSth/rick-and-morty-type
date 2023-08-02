@@ -20,7 +20,7 @@ const CardContainer = styled(Link)`
   text-decoration: none;
   text-dark;
   border: 2px solid #0b5ed7;
-  background:rgb(34, 34, 34,  0.5);
+  background:rgb(34, 34, 34,  0.8);
   border-radius: 10px;
   display: flex;
   flex-basis: 18%;
@@ -59,16 +59,6 @@ const StatusBadge = styled.div<{ status: "Dead" | "Alive" | "Unknown" }>`
 `;
 
 const Card: React.FC<CardProps> = ({ page, results }) => {
-  // this will be added when we make the api call...
-
-  //   const [results, setResults] = useState<Character[] | null>(null);
-  //   const API = "the api we need"
-  //   useEffect(() => {
-  //     fetch("API")
-  //       .then((response) => response.json())
-  //       .then((data) => setResults(data));
-  //   }, []);
-
   return (
     <>
       {results ? (
