@@ -54,7 +54,6 @@ const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange }) => {
       <option value="" key="reset" hidden={!selected}>
         {selected ? "All (reset)" : "Filter by status"}
       </option>
-
       {options.map((option) => (
         <option key={option} value={option}>
           {option}

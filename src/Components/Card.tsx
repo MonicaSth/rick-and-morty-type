@@ -1,16 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-
-interface Character {
-  id: number;
-  image: string;
-  name: string;
-  status: "Dead" | "Alive" | "Unknown";
-  location: {
-    name: string;
-  };
-}
+import { Character } from "../API/useCharacters";
 
 interface CardProps {
   page: string;
@@ -18,44 +9,72 @@ interface CardProps {
 }
 const CardContainer = styled(Link)`
   text-decoration: none;
-  text-dark;
-  border: 2px solid #0b5ed7;
-  background:rgb(34, 34, 34,  0.8);
+  border: 1px solid #ccc;
+  background: rgb(34, 34, 34, 0.8);
+  box-shadow: 1px 4px 7px #747494;
   border-radius: 10px;
   display: flex;
   flex-basis: 18%;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   position: relative;
   color: white;
+  min-width: 157px;
   width: 100%;
-  margin: 7.5px;
+  margin: 15px 7.5px;
   padding: 0;
+  transition: transform 0.3s ease;
   &:hover {
     cursor: pointer;
-    
+    border-color: rgb(50, 195, 34);
+    box-shadow: 1px 4px 7px rgb(50, 195, 34);
+    transform: scale(1.06);
   }
 `;
 
 const CardImage = styled.img`
-  border-radius: 10px 10px 0 0;
-  width: 100%;
+  // border-radius: 10px 10px 0 0;
+  // width: 100%;
+  border-radius: 157px;
+  margin: 5% 5%;
+  width: 90%;
 `;
 
 const CardContent = styled.div`
-  padding: 10px;
+  padding: 5px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
-const StatusBadge = styled.div<{ status: "Dead" | "Alive" | "Unknown" }>`
+const Name = styled.div`
+  font-weight: bold;
+  @media (min-width: 950px) {
+    font-size: large;
+  }
+`;
+
+const GenderBadge = styled.div<{
+  gender: "Female" | "Male" | "Genderless" | "unknown";
+}>`
   position: absolute;
-  top: 10px;
-  right: 20px;
+  top: -10px;
+  right: 8px;
   font-size: 17px;
   color: #fff;
-  padding: 6px 12px;
-  border-radius: 5px;
-  background-color: ${({ status }) =>
-    status === "Dead" ? "#dc3545" : status === "Alive" ? "#28a745" : "#6c757d"};
+  box-shadow: 1px 4px 7px #747494;
+  padding: 4px 8px;
+  border-radius: 25px;
+  background-color: ${({ gender }) =>
+    gender === "Female"
+      ? "#dc3545"
+      : gender === "Male"
+      ? "#3976fa"
+      : gender === "Genderless"
+      ? "#f5da42"
+      : "#6c757d"};
 `;
 
 const Card: React.FC<CardProps> = ({ page, results }) => {
@@ -66,13 +85,10 @@ const Card: React.FC<CardProps> = ({ page, results }) => {
           <CardContainer to={`${page}${x.id}`} key={x.id}>
             <CardImage src={x.image} alt="" />
             <CardContent>
-              <div>{x.name}</div>
-              <div>
-                <div>Last Location</div>
-                <div>{x.location.name}</div>
-              </div>
+              <GenderBadge gender={x.gender}>{x.gender}</GenderBadge>
+              <Name>{x.name}</Name>
+              <div>{x.status}</div>
             </CardContent>
-            <StatusBadge status={x.status}>{x.status}</StatusBadge>
           </CardContainer>
         ))
       ) : (

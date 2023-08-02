@@ -17,18 +17,27 @@ const NoResult = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-wrap: wrap;
   width: auto;
-  min-height: 260px;
-  margin: 2% 5%;
+  min-height: 200px;
+  background: rgb(34, 34, 34, 0.8);
+  box-shadow: 1px 4px 7px #747494;
+  border-radius: 10px;
+  margin: 2% 10%;
 `;
-const MainHomeStyled = styled.div``;
+const MainHomeStyled = styled.div`
+  width: 100%;
+`;
 const FiltersContainer = styled.div`
+  width: auto;
   margin: 30px;
   margin-bottom: 90px;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-wrap: wrap;
+  @media (max-width: 465px) {
+    flex-direction: column;
+  }
 `;
 const ResetButton = styled.button`
   padding: 8px;
@@ -39,8 +48,12 @@ const ResetButton = styled.button`
   font-size: 16px;
   outline: none;
   box-shadow: 1px 4px 7px #747494;
-  transition: border-color 0.2s ease-in-out;
   margin: 10px;
+  transition: transform 0.1s ease-in-out;
+  &:active {
+    /* Apply the desired animation when the button is clicked */
+    transform: scale(0.9);
+  }
   &:focus {
     border-color: rgb(50, 195, 34);
   }
@@ -51,24 +64,22 @@ const ResetButton = styled.button`
   }
 `;
 const Home: React.FC = () => {
-  // const [filteredCharacters, setFilteredCharacters] =
-  //   useState<Character[]>([]);
+  const [filteredCharacters, setFilteredCharacters] = useState<Character[]>([]);
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [page, setPage] = useState(1);
   const [Characters, setCharacters] = useState<Character[]>([]);
   const [lastPage, setLastPage] = useState(1);
-  const [reset, setReseted] = useState(false);
+  const [reset, setReset] = useState(false);
 
   const { results } = useCharacters(page, searchText, selectedStatus);
 
   useEffect(() => {
-    if (results && results?.results !== undefined) {
+    if (results) {
       setCharacters(results.results);
       setLastPage(results.info.pages);
     }
   }, [results, searchText, selectedStatus]);
-  console.log(Characters);
 
   const debounce = (callback: (...args: any[]) => void, delay: number) => {
     let timeoutId: ReturnType<typeof setTimeout>;
@@ -80,19 +91,21 @@ const Home: React.FC = () => {
     };
   };
 
-  //Not filtering anymore,  making a new call from Api for each filter, so we  can populate  with all possible characters with that filters
+  useEffect(() => {
+    const filtered = Characters.filter((character) => {
+      const nameMatch = character.name
+        .toLowerCase()
+        .includes(searchText.toLowerCase());
+      const statusMatch =
+        !selectedStatus || character.status === selectedStatus;
+      return nameMatch && statusMatch;
+    });
+    setFilteredCharacters(filtered);
+  }, [searchText, selectedStatus, Characters]);
 
-  // useEffect(() => {
-  //   const filtered = Characters.filter((character) => {
-  //     const nameMatch = character.name
-  //       .toLowerCase()
-  //       .includes(searchText.toLowerCase());
-  //     const statusMatch =
-  //       !selectedStatus || character.status === selectedStatus;
-  //     return nameMatch && statusMatch;
-  //   });
-  //   setFilteredCharacters(filtered);
-  // }, [searchText, selectedStatus, Characters]);
+  if (!results) {
+    return <div>Loading...</div>;
+  }
 
   const handleSearchChange = debounce((text: string) => {
     setSearchText(text);
@@ -108,10 +121,10 @@ const Home: React.FC = () => {
     setSearchText("");
     setSelectedStatus("");
     setPage(1);
-    setReseted(true);
+    setReset(true);
     setTimeout(() => {
-      setReseted(false);
-    }, 100);
+      setReset(false);
+    }, 300);
   };
 
   const handleNextPage = () => {
@@ -137,19 +150,23 @@ const Home: React.FC = () => {
         />
         <ResetButton onClick={handleReset}>Reset Filters</ResetButton>
       </FiltersContainer>
-      <CharactersContainer>
-        <Card page="/" results={Characters} />
-      </CharactersContainer>
-      <Pagination
-        currentPage={page}
-        lastPage={lastPage}
-        nextPage={handleNextPage}
-        previousPage={handlePreviousPage}
-      />
-      {Characters.length === 0 && (
+      {filteredCharacters.length !== 0 && (
+        <>
+          <CharactersContainer>
+            <Card page="/" results={filteredCharacters} />
+          </CharactersContainer>
+          <Pagination
+            currentPage={page}
+            lastPage={lastPage}
+            nextPage={handleNextPage}
+            previousPage={handlePreviousPage}
+          />
+        </>
+      )}
+      {filteredCharacters.length === 0 && (
         <NoResult>
           <p>No characters with the name and status you mentioned! </p>
-          <p>Please Try other option</p>
+          <p>Please Try other options</p>
         </NoResult>
       )}
     </MainHomeStyled>

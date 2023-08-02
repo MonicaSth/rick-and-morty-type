@@ -16,14 +16,14 @@ export interface Character {
   species: string;
   type: string;
   gender: "Female" | "Male" | "Genderless" | "unknown";
-  origin: string;
+  origin: { name: string; url: string };
 
   status: "Dead" | "Alive" | "Unknown";
   location: {
     name: string;
     url: string;
   };
-  episode: string;
+  episode: string[];
   url: string;
   created: string;
 }
@@ -52,7 +52,6 @@ const useCharacters = (
       });
   }, [API]);
 
-  console.log("result", results);
   return {
     results,
   };

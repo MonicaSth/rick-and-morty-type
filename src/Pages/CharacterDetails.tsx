@@ -1,4 +1,6 @@
-const CharacterDetails = () => {
-  return <div> Character page</div>;
+import CardDetails from "../Components/CardDetails";
+
+const CharacterDetailsPage = () => {
+  return <CardDetails />;
 };
-export default CharacterDetails;
+export default CharacterDetailsPage;

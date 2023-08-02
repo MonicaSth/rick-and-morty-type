@@ -1,26 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
-
-interface Character {
-  id: number;
-  name: string;
-  location: {
-    name: string;
-  };
-  origin: {
-    name: string;
-  };
-  gender: string;
-  image: string;
-  status: "Dead" | "Alive" | "Unknown";
-  species: string;
-}
+import useCharacterDetails from "../API/useCharacterDetails";
+import { Character } from "../API/useCharacters";
+import Episode from "./Episode";
 
 const CardDetailsContainer = styled.div`
+  border: 1px solid #ccc;
+  background: rgb(34, 34, 34, 0.8);
+  box-shadow: 1px 4px 7px #747494;
+  border-radius: 10px;
   display: flex;
-  justify-content: center;
-  margin-bottom: 5rem;
+  flex-basis: 18%;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  color: white;
+  min-width: 300px;
+  // width: 80%;
+  margin: 2% 10%;
+  padding: 20px;
 
   .content {
     display: flex;
@@ -33,88 +32,99 @@ const CardDetailsContainer = styled.div`
       padding: 0.5rem 1rem;
       border-radius: 0.25rem;
     }
-
-    .bg-danger {
-      background-color: #dc3545;
-    }
-
-    .bg-success {
-      background-color: #28a745;
-    }
-
-    .bg-secondary {
-      background-color: #6c757d;
-    }
-
-    .fw-bold {
-      font-weight: bold;
-    }
   }
+`;
+
+const ImageAndNameStyled = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin: 2% 3%;
+  align-content: center;
+  justify-content: center;
+  flex-basis: 42%;
+`;
+const CharacterDetails = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 0% 5%;
+  @media (max-width: 845px) {
+    flex-direction: column;
+  }
+`;
+
+const TagStyled = styled.span`
+  font-weight: bold;
+`;
+
+const ImageStyled = styled.img`
+  // margin: 10px;
+  // width: 90%
+  max-width: 430px;
+  border-radius: 200px;
+  @media (min-width: 1352px) {
+    border-radius: 270px;
+  }
+`;
+
+const DivStyled = styled.div`
+  padding: 5px;
 `;
 
 const CardDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [fetchedData, updateFetchedData] = useState<Character | null>(null);
-
-  const api = `https://rickandmortyapi.com/api/character/${id}`;
+  const [characterDetail, setCharacterDetail] = useState<Character | null>(
+    null
+  );
+  const [episodeURL, setEpisodeURL] = useState<string[]>([]);
+  const { results } = useCharacterDetails(id!);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(api);
-        const data: Character = await response.json();
-        updateFetchedData(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+    if (results) {
+      setCharacterDetail(results);
+      setEpisodeURL(results.episode);
+    }
+  }, [results]);
 
-    fetchData();
-  }, [api]);
-
-  if (!fetchedData) {
-    return <div>Loading...</div>;
-  }
-
-  const { name, location, origin, gender, image, status, species } =
-    fetchedData;
+  const episodeNumbers = episodeURL.map((url) => {
+    const parts = url.split("/");
+    return parts[parts.length - 1];
+  });
 
   return (
-    <CardDetailsContainer>
-      <div className="d-flex flex-column gap-3">
-        <h1 className="text-center">{name}</h1>
-        <img className="img-fluid" src={image} alt="" />
-        <div
-          className={`badge bg-${
-            status === "Dead"
-              ? "danger"
-              : status === "Alive"
-              ? "success"
-              : "secondary"
-          } fs-5`}
-        >
-          {status}
-        </div>
-        <div className="content">
-          <div>
-            <span className="fw-bold">Gender: </span>
-            {gender}
-          </div>
-          <div>
-            <span className="fw-bold">Location: </span>
-            {location?.name}
-          </div>
-          <div>
-            <span className="fw-bold">Origin: </span>
-            {origin?.name}
-          </div>
-          <div>
-            <span className="fw-bold">Species: </span>
-            {species}
-          </div>
-        </div>
-      </div>
-    </CardDetailsContainer>
+    <>
+      {!characterDetail && <div>..Loading</div>}
+      {characterDetail && (
+        <CardDetailsContainer>
+          <CharacterDetails>
+            <ImageAndNameStyled>
+              <h1>{characterDetail.name}</h1>
+              <ImageStyled src={characterDetail.image} alt="" />
+            </ImageAndNameStyled>
+            <ImageAndNameStyled>
+              <DivStyled>{characterDetail.status}</DivStyled>
+
+              <DivStyled>
+                <TagStyled>Gender: </TagStyled>
+                {characterDetail.gender}
+              </DivStyled>
+              <DivStyled>
+                <TagStyled>Location: </TagStyled>
+                {characterDetail.location?.name}
+              </DivStyled>
+              <DivStyled>
+                <TagStyled>Origin: </TagStyled>
+                {characterDetail.origin!.name}
+              </DivStyled>
+              <DivStyled>
+                <TagStyled>Species: </TagStyled>
+                {characterDetail.species}
+              </DivStyled>
+            </ImageAndNameStyled>
+          </CharacterDetails>
+          <Episode episodesNumbers={episodeNumbers} />
+        </CardDetailsContainer>
+      )}
+    </>
   );
 };
 
