@@ -1,16 +1,15 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Header from "./Design-system/Header";
 import Footer from "./Design-system/Footer";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./Pages/Home";
 import CharacterDetailsPage from "./Pages/CharacterDetails";
 import { styled } from "styled-components";
-import Dark from "./Images/Dark.jpg";
-import Light from "./Images/Light.jpg";
 import { useThemeContext } from "./Context/Theme-context";
 import ImagePreloader from "./Components/ImagePreloader";
+import "./index.css";
 
-const Main = styled.div`
+const Main = styled.main`
   margin: 0;
   height: 100%;
   width: 100%;
@@ -18,30 +17,19 @@ const Main = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+  background: var(--background-image) no-repeat;
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
+  color: var(--text-color);
 `;
 
 function App() {
   const { themeIsLight } = useThemeContext();
 
-  useEffect(() => {
-    document.body.style.background = themeIsLight
-      ? `url(${Light}) `
-      : `url(${Dark})`;
-    document.body.style.color = themeIsLight ? "black" : "white";
-    document.body.style.backgroundSize = "cover";
-    document.body.style.backgroundPositionY = "top";
-    document.body.style.backgroundPositionX = "center";
-    document.body.style.backgroundAttachment = "fixed";
-    document.body.style.scrollBehavior = "smooth";
-    document.body.style.textAlign = "center";
-    document.body.style.display = "flex";
-    document.body.style.justifyContent = "center";
-    document.body.style.flexDirection = "row";
-  }, [themeIsLight]);
-
   return (
     <BrowserRouter>
-      <Main>
+      <Main className={themeIsLight ? "light-theme" : "dark-theme"}>
         <Header />
         <ImagePreloader />
         <Routes>

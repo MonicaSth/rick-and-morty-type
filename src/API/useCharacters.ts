@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-interface Result {
+interface CharactersFetchResult {
   info: {
     count: number;
     next: string | null;
@@ -33,9 +33,8 @@ const useCharacters = (
   CharacterName: string,
   CharacterStatus: string
 ) => {
-  const [fetchedCharacters, setFetchedCharacters] = useState<Result | null>(
-    null
-  );
+  const [fetchedCharacters, setFetchedCharacters] =
+    useState<CharactersFetchResult | null>(null);
   const characterApiEndpoint = `https://rickandmortyapi.com/api/character/?page=${pageNumber}&name=${CharacterName}&status=${CharacterStatus}`;
 
   useEffect(() => {
@@ -51,6 +50,15 @@ const useCharacters = (
       .then((data) => setFetchedCharacters(data))
       .catch((error) => {
         console.error("Error fetching data:", error);
+        setFetchedCharacters({
+          info: {
+            pages: 1,
+            count: 0,
+            next: null,
+            prev: null,
+          },
+          results: [],
+        });
       });
   }, [characterApiEndpoint]);
 

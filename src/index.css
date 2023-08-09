@@ -18,9 +18,23 @@ body {
 #root {
   width: 100%;
   height: 100%;
+  --background-image-light: url("./Images/Light.jpg");
+  --background-image-dark: url("./Images/Dark.jpg");
+  --text-color-light: black;
+  --text-color-dark: white;
 }
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
   color: white;
+}
+
+.light-theme {
+  --background-image: var(--background-image-light);
+  --text-color: var(--text-color-light);
+}
+
+.dark-theme {
+  --background-image: var(--background-image-dark);
+  --text-color: var(--text-color-dark);
 }

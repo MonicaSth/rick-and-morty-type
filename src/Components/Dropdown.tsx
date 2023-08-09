@@ -36,11 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange }) => {
   const { themeIsLight } = useThemeContext();
 
   useEffect(() => {
-    if (value === "") {
-      setSelected(false);
-    } else {
-      setSelected(true);
-    }
+    setSelected(value !== "");
   }, [value]);
 
   const handleChange = (event: ChangeEvent<HTMLSelectElement>) => {
@@ -49,7 +45,7 @@ const Dropdown: React.FC<DropdownProps> = ({ options, value, onChange }) => {
 
   return (
     <Select themeIsLight={themeIsLight} value={value} onChange={handleChange}>
-      <option value="" key="reset" selected hidden={!selected}>
+      <option value="" key="reset" hidden={!selected}>
         {selected ? "All (reset filter)" : "Filter by status"}
       </option>
       {options.map((option) => (

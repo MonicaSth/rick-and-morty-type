@@ -6,6 +6,7 @@ import styled from "styled-components";
 import useCharacters, { Character } from "../API/useCharacters";
 import Pagination from "../Components/Pagination";
 import { useThemeContext } from "../Context/Theme-context";
+import { debounce } from "../Helpers/Helpers";
 
 const CharactersContainer = styled.div`
   display: flex;
@@ -70,7 +71,6 @@ const ResetButton = styled.button<{ themeIsLight: boolean }>`
 `;
 
 const Home: React.FC = () => {
-  const [filteredCharacters, setFilteredCharacters] = useState<Character[]>([]);
   const [searchText, setSearchText] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [page, setPage] = useState(1);
@@ -85,33 +85,7 @@ const Home: React.FC = () => {
       setCharacters(fetchedCharacters.results);
       setLastPage(fetchedCharacters.info.pages);
     }
-  }, [fetchedCharacters, searchText, selectedStatus]);
-
-  const debounce = (callback: (...args: any[]) => void, delay: number) => {
-    let timeoutId: ReturnType<typeof setTimeout>;
-    return (...args: any[]) => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        callback(...args);
-      }, delay);
-    };
-  };
-
-  useEffect(() => {
-    const filtered = Characters.filter((character) => {
-      const nameMatch = character.name
-        .toLowerCase()
-        .includes(searchText.toLowerCase());
-      const statusMatch =
-        !selectedStatus || character.status === selectedStatus;
-      return nameMatch && statusMatch;
-    });
-    setFilteredCharacters(filtered);
-  }, [searchText, selectedStatus, Characters]);
-
-  if (!fetchedCharacters) {
-    return <div>Loading...</div>;
-  }
+  }, [fetchedCharacters]);
 
   const handleSearchChange = debounce((text: string) => {
     setSearchText(text);
@@ -156,10 +130,10 @@ const Home: React.FC = () => {
           Reset Filters
         </ResetButton>
       </FiltersContainer>
-      {filteredCharacters.length !== 0 && (
+      {Characters.length !== 0 && (
         <>
           <CharactersContainer>
-            <Card page="/" results={filteredCharacters} />
+            <Card page="/" results={Characters} />
           </CharactersContainer>
           <Pagination
             currentPage={page}
@@ -169,11 +143,14 @@ const Home: React.FC = () => {
           />
         </>
       )}
-      {filteredCharacters.length === 0 && (
+      {Characters.length === 0 && (
         <NoResult themeIsLight={themeIsLight}>
           <p>No characters with the name and status you mentioned! </p>
           <p>Please Try other options</p>
         </NoResult>
+      )}
+      {!fetchedCharacters && (
+        <NoResult themeIsLight={themeIsLight}>Loading...</NoResult>
       )}
     </MainHomeStyled>
   );

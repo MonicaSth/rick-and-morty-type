@@ -3,7 +3,7 @@ import useEpisodes, { EpisodeType } from "../API/useEpisodes";
 import styled from "styled-components";
 
 interface EpisodeProps {
-  episodesNumbers: string[];
+  episodesNumbers: (string | undefined)[];
 }
 
 const CustomList = styled.ul`

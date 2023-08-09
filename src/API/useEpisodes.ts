@@ -9,7 +9,7 @@ export interface EpisodeType {
   url: string;
   created: string;
 }
-const useEpisodes = (CharacterEpisodes: string[]) => {
+const useEpisodes = (CharacterEpisodes: (string | undefined)[]) => {
   const [episodes, setEpisodes] = useState<EpisodeType[] | null>(null);
   const episodeApiEndpoint = `https://rickandmortyapi.com/api/episode/${CharacterEpisodes}`;
 

@@ -104,7 +104,7 @@ const CardDetails: React.FC = () => {
 
   const episodeNumbers = episodeURL.map((url) => {
     const parts = url.split("/");
-    return parts[parts.length - 1];
+    return parts.pop();
   });
 
   return (
